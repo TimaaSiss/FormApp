@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("user") // Par exemple, "admin" ou "user"
+  createdAt DateTime @default(now())
+}
+
+model FormResponse {
+  id                 Int      @id @default(autoincrement())
+  nomProjet          String?
+  contactNom         String?
+  contactFonction    String?
+  email              String?
+  telephone          String?
+  siteWeb            String?
+  dateMiseEnLigne    DateTime?
+  evenementAssocie   String?
+
+  objectifs          String[]
+  publicCible        String?
+
+  pages              String[]
+  contenuDisponible  String?
+  pagesAMettreJour   Boolean?
+
+  fonctionnalites    String[]
+  typesProduits      String[]
+  nbProduits         String?
+  besoinsSpecifiques String[]
+
+  webMobile        String[] // ou "webMobile"
+
+  stylePrefere       String[]
+
+  gestionPlateforme  Boolean?
+  hebergement        String?
+  connexionOutils    String?
+
+  respectRGPD        String?
+  sauvegardesAuto    String?
+
+  besoinsSupport     String[]
+  budget             String?
+  paiement           String?
+  appelOffre         String?
+
+  communityManagement String[]
+  plateformes         String[]
+  besoinsComm         String[]
+  strategieExistante  String?
+
+  referencement       String[]
+  accompagnementSEO   String[]
+
+  gestionEReputation  String?
+  actionsAvis        String[]
+
+  remarques          String?
+
+  createdAt          DateTime @default(now())
+}
