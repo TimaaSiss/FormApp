@@ -18,61 +18,61 @@ model User {
   email     String   @unique
   password  String
   name      String?
-  role      String   @default("user") // Par exemple, "admin" ou "user"
+  role      String   @default("user")
   createdAt DateTime @default(now())
 }
 
 model FormResponse {
-  id                 Int      @id @default(autoincrement())
-  nomProjet          String?
-  contactNom         String?
-  contactFonction    String?
-  email              String?
-  telephone          String?
-  siteWeb            String?
-  dateMiseEnLigne    DateTime?
-  evenementAssocie   String?
+  id               Int       @id @default(autoincrement())
+  nomProjet        String?
+  contactNom       String?
+  contactFonction  String?
+  email            String?
+  telephone        String?
+  siteWeb          String?
+  dateMiseEnLigne  DateTime?
+  evenementAssocie String?
 
-  objectifs          String[]
-  publicCible        String?
+  objectifs   String[]
+  publicCible String?
 
-  pages              String[]
-  contenuDisponible  String?
-  pagesAMettreJour   Boolean?
+  pages             String[]
+  contenuDisponible String?
+  pagesAMettreJour  Boolean?
 
   fonctionnalites    String[]
   typesProduits      String[]
   nbProduits         String?
   besoinsSpecifiques String[]
 
-  webMobile        String[] // ou "webMobile"
+  webMobile String[] // ou "webMobile"
 
-  stylePrefere       String[]
+  stylePrefere String[]
 
-  gestionPlateforme  Boolean?
-  hebergement        String?
-  connexionOutils    String?
+  gestionPlateforme Boolean?
+  hebergement       String?
+  connexionOutils   String?
 
-  respectRGPD        String?
-  sauvegardesAuto    String?
+  respectRGPD     String?
+  sauvegardesAuto String?
 
-  besoinsSupport     String[]
-  budget             String?
-  paiement           String?
-  appelOffre         String?
+  besoinsSupport String[]
+  budget         String?
+  paiement       String?
+  appelOffre     String?
 
   communityManagement String[]
   plateformes         String[]
   besoinsComm         String[]
   strategieExistante  String?
 
-  referencement       String[]
-  accompagnementSEO   String[]
+  referencement     String[]
+  accompagnementSEO String[]
 
-  gestionEReputation  String?
+  gestionEReputation String?
   actionsAvis        String[]
 
-  remarques          String?
+  remarques String?
 
-  createdAt          DateTime @default(now())
+  createdAt DateTime @default(now())
 }

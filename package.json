@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:push": "npx prisma db push",
+    "db:seed": "npx tsx ./src/scripts/seed.ts",
+    "db:studio": "npx prisma studio"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
