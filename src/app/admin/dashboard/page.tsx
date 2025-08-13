@@ -1,5 +1,4 @@
 'use client';
-import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Bar } from 'react-chartjs-2';
@@ -12,7 +11,11 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { LogOut, LayoutDashboard } from 'lucide-react';
+import { LogOut, ClipboardList } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { getResponses } from '@/actions/getResponses';
+import { useEffect } from 'react';
+import Link from 'next/link';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -24,40 +27,19 @@ interface Response {
   createdAt: string;
 }
 
-interface Stats {
-  totalResponses: number;
-}
-
 export default function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [responses, setResponses] = useState<Response[]>([]);
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['responses'],
+    queryFn: async () => await getResponses(),
+  });
 
   useEffect(() => {
-    if (status === 'loading') return;
-    if (!session || !session.user || session.user.role !== 'admin') {
+    if (status !== 'loading' && (!session || session.user?.role !== 'admin')) {
       router.push('/admin/login');
-      return;
     }
-
-    const fetchResponses = async () => {
-      try {
-        const res = await fetch('/api/responses');
-        const data = await res.json();
-        if (data.success) {
-          setResponses(data.responses);
-          setStats({ totalResponses: data.responses.length });
-        }
-      } catch (error) {
-        console.error('Erreur:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchResponses();
   }, [status, session, router]);
 
   function getMonthlyProjectStats(responses: Response[]) {
@@ -77,16 +59,21 @@ export default function Dashboard() {
     };
   }
 
-  if (status === 'loading' || loading) {
+  if (status === 'loading' || isLoading) {
     return <div className="flex items-center justify-center min-h-screen">Chargement...</div>;
   }
 
+  if (error) {
+    return <div className="text-red-500 text-center mt-10">Erreur : {String(error)}</div>;
+  }
+
+  const responses = data?.responses || [];
   const monthlyStats = getMonthlyProjectStats(responses);
   const latestResponses = responses.slice(0, 2);
+  const totalResponses = data?.stats.totalResponses || 0;
 
   return (
     <div className="min-h-screen flex">
-      {/* Sidebar amélioré */}
       <aside className="w-64 bg-gradient-to-b from-blue-800 to-blue-600 text-white p-6 flex flex-col justify-between">
         <div>
           <h2 className="text-xl font-bold mb-8">Admin Panel</h2>
@@ -108,9 +95,7 @@ export default function Dashboard() {
         </button>
       </aside>
 
-      {/* Main */}
       <main className="flex-1 bg-gray-100 p-6 space-y-6">
-        {/* Header */}
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold">Bienvenue {session?.user?.name || 'Admin'}</h1>
@@ -118,11 +103,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Statistiques */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           <div className="bg-white shadow p-6 rounded">
             <h2 className="text-sm text-gray-500">Total de réponses</h2>
-            <p className="text-3xl font-bold text-blue-600">{stats?.totalResponses || 0}</p>
+            <p className="text-3xl font-bold text-blue-600">{totalResponses}</p>
           </div>
           <div className="bg-white shadow p-6 rounded">
             <h2 className="text-sm text-gray-500">Mois différents</h2>
@@ -138,7 +122,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Graphique */}
         <div className="bg-white shadow p-6 rounded">
           <h2 className="text-lg font-semibold mb-4">Projets distincts par mois</h2>
           <Bar
@@ -162,7 +145,6 @@ export default function Dashboard() {
           />
         </div>
 
-        {/* Deux dernières réponses */}
         <div className="bg-white shadow p-6 rounded">
           <h2 className="text-lg font-semibold mb-4">Dernières réponses</h2>
           {latestResponses.length === 0 ? (
@@ -170,23 +152,27 @@ export default function Dashboard() {
           ) : (
             <div className="grid gap-4">
               {latestResponses.map((r) => (
-                <div key={r.id} className="border p-4 rounded flex justify-between items-start">
+                <Link
+                  key={r.id}
+                  href={`/admin/responses/${r.id}`}
+                  className="border p-4 rounded flex justify-between items-start hover:bg-gray-50 transition"
+                >
                   <div>
                     <p className="font-semibold">{r.nomProjet || 'Sans nom'}</p>
                     <p className="text-sm text-gray-600">{r.email || 'N/A'}</p>
-                    <p className="text-sm">{r.objectifs?.join(', ')}</p>
+                    <p className="text-sm">{r.objectifs?.join(', ') || 'Aucun'}</p>
                   </div>
                   <div className="text-sm text-gray-500">
                     {new Date(r.createdAt).toLocaleDateString('fr-FR')}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
           <div className="mt-4">
-            <a href="/admin/responses" className="text-blue-600 underline text-sm">
+            <Link href="/admin/responses" className="text-blue-600 underline text-sm">
               Voir toutes les réponses →
-            </a>
+            </Link>
           </div>
         </div>
       </main>
