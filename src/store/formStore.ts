@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { z } from "zod";
-import { fullSchema } from "@/app/page";
+import { fullSchema } from "@/components/form";
 
 type FormValues = z.infer<typeof fullSchema>;
 

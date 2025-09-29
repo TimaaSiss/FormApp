@@ -1,5 +1,6 @@
 "use server";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
+import { authOptions } from "@/lib/auth";
 import { asStringArray } from "@/lib";
 import { prisma } from "@/lib/prisma";
 import { FormResponse } from "@prisma/client";

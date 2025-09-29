@@ -1,13 +1,13 @@
 import { getResponseById } from "@/actions/getResponseById";
-import ResponseDetailsClient from "@/app/components/responseDetails";
+import ResponseDetailsClient from "@/components/responseDetails";
 import { notFound } from "next/navigation";
 
-interface Props {
-  params: { id: string };
-}
-
-export default async function ResponseDetails({ params }: Props) {
-  const { id } = params;
+export default async function ResponseDetails({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   const { response } = await getResponseById(id);
 
   if (!response) {
