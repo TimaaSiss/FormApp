@@ -1,7 +1,7 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import { z } from 'zod';
-import { fullSchema } from '@/app/formulaire/page';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { z } from "zod";
+import { fullSchema } from "@/app/page";
 
 type FormValues = z.infer<typeof fullSchema>;
 
@@ -34,7 +34,8 @@ export const useFormStore = create<FormState>()(
     (set) => ({
       formData: defaultFormData,
       step: 0,
-      setFormData: (data) => set((state) => ({ formData: { ...state.formData, ...data } })),
+      setFormData: (data) =>
+        set((state) => ({ formData: { ...state.formData, ...data } })),
       setStep: (step) => set({ step }),
       reset: () =>
         set({
@@ -43,8 +44,8 @@ export const useFormStore = create<FormState>()(
         }),
     }),
     {
-      name: 'form-storage', // Clé dans localStorage
+      name: "form-storage",
       storage: createJSONStorage(() => localStorage),
-    },
-  ),
+    }
+  )
 );

@@ -1,15 +1,9 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -33,21 +27,21 @@ model FormResponse {
   dateMiseEnLigne  DateTime?
   evenementAssocie String?
 
-  objectifs   String[]
+  objectifs   Json?
   publicCible String?
 
-  pages             String[]
+  pages             Json?
   contenuDisponible String?
   pagesAMettreJour  Boolean?
 
-  fonctionnalites    String[]
-  typesProduits      String[]
+  fonctionnalites    Json?
+  typesProduits      Json?
   nbProduits         String?
-  besoinsSpecifiques String[]
+  besoinsSpecifiques Json?
 
-  webMobile String[] // ou "webMobile"
+  webMobile Json?
 
-  stylePrefere String[]
+  stylePrefere Json?
 
   gestionPlateforme Boolean?
   hebergement       String?
@@ -56,21 +50,21 @@ model FormResponse {
   respectRGPD     String?
   sauvegardesAuto String?
 
-  besoinsSupport String[]
+  besoinsSupport Json?
   budget         String?
   paiement       String?
   appelOffre     String?
 
-  communityManagement String[]
-  plateformes         String[]
-  besoinsComm         String[]
+  communityManagement Json?
+  plateformes         Json?
+  besoinsComm         Json?
   strategieExistante  String?
 
-  referencement     String[]
-  accompagnementSEO String[]
+  referencement     Json?
+  accompagnementSEO Json?
 
   gestionEReputation String?
-  actionsAvis        String[]
+  actionsAvis        Json?
 
   remarques String?
 

@@ -1,58 +1,20 @@
-'use server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { prisma } from '@/lib/prisma';
+"use server";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { FormResponse } from "@/app/components/responseDetails";
+import { asStringArray } from "@/lib";
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
 
-interface FormResponse {
-  id: number;
-  nomProjet: string | null;
-  contactNom: string | null;
-  contactFonction: string | null;
-  email: string | null;
-  telephone: string | null;
-  siteWeb: string | null;
-  dateMiseEnLigne: string | null;
-  evenementAssocie: string | null;
-  objectifs: string[];
-  publicCible: string | null;
-  pages: string[];
-  contenuDisponible: string | null;
-  pagesAMettreJour: boolean | null;
-  fonctionnalites: string[];
-  typesProduits: string[];
-  nbProduits: string | null;
-  besoinsSpecifiques: string[];
-  webMobile: string[];
-  stylePrefere: string[];
-  gestionPlateforme: boolean | null;
-  hebergement: string | null;
-  connexionOutils: string | null;
-  respectRGPD: string | null;
-  sauvegardesAuto: string | null;
-  besoinsSupport: string[];
-  budget: string | null;
-  paiement: string | null;
-  appelOffre: string | null;
-  communityManagement: string[];
-  plateformes: string[];
-  besoinsComm: string[];
-  strategieExistante: string | null;
-  referencement: string[];
-  accompagnementSEO: string[];
-  gestionEReputation: string | null;
-  actionsAvis: string[];
-  remarques: string | null;
-  createdAt: string;
-}
-
-export async function getResponseById(id: string): Promise<{ response: FormResponse | null }> {
+export async function getResponseById(
+  id: string
+): Promise<{ response: FormResponse | null }> {
   const session = await getServerSession(authOptions);
-  if (!session || !session.user || session.user.role !== 'admin') {
-    throw new Error('Accès non autorisé');
+  if (!session || !session.user || session.user.role !== "admin") {
+    throw new Error("Accès non autorisé");
   }
 
   try {
-    const response = await prisma.formResponse.findUnique({
+    const res = await prisma.formResponse.findUnique({
       where: { id: Number(id) },
       select: {
         id: true,
@@ -97,21 +59,33 @@ export async function getResponseById(id: string): Promise<{ response: FormRespo
       },
     });
 
-    if (!response) {
+    if (!res) {
       return { response: null };
     }
 
     return {
       response: {
-        ...response,
-        dateMiseEnLigne: response.dateMiseEnLigne
-          ? response.dateMiseEnLigne.toISOString()
-          : null,
-        createdAt: response.createdAt.toISOString(),
+        ...res,
+        objectifs: asStringArray(res.objectifs),
+        pages: asStringArray(res.pages),
+        fonctionnalites: asStringArray(res.fonctionnalites),
+        typesProduits: asStringArray(res.typesProduits),
+        besoinsSpecifiques: asStringArray(res.besoinsSpecifiques),
+        webMobile: asStringArray(res.webMobile),
+        stylePrefere: asStringArray(res.stylePrefere),
+        besoinsSupport: asStringArray(res.besoinsSupport),
+        communityManagement: asStringArray(res.communityManagement),
+        plateformes: asStringArray(res.plateformes),
+        besoinsComm: asStringArray(res.besoinsComm),
+        referencement: asStringArray(res.referencement),
+        accompagnementSEO: asStringArray(res.accompagnementSEO),
+        actionsAvis: asStringArray(res.actionsAvis),
+        dateMiseEnLigne: res.dateMiseEnLigne?.toString() ?? null,
+        createdAt: res.createdAt.toString(),
       },
     };
   } catch (error) {
-    console.error('Erreur lors de la récupération de la réponse:', error);
-    throw new Error('Erreur serveur');
+    console.error("Erreur lors de la récupération de la réponse:", error);
+    throw new Error("Erreur serveur");
   }
 }

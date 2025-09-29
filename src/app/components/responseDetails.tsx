@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { ArrowLeft, LogOut } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { motion } from "framer-motion";
+import { ArrowLeft, LogOut } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-interface FormResponse {
+export interface FormResponse {
   id: number;
   nomProjet: string | null;
   contactNom: string | null;
@@ -55,16 +55,17 @@ interface Props {
 export default function ResponseDetailsClient({ response }: Props) {
   const router = useRouter();
 
-  // Journal pour déboguer les données reçues
   useEffect(() => {
-    console.log('Response reçue:', response);
+    console.log("Response reçue:", response);
   }, [response]);
 
   return (
     <div className="min-h-screen flex bg-[#F5F5F5] font-inter">
       <aside className="w-72 bg-gradient-to-b from-[#1E3A8A] to-[#3B82F6] text-white p-8 flex flex-col justify-between shadow-lg">
         <div>
-          <h2 className="text-2xl font-bold mb-10 tracking-tight">Panel Admin</h2>
+          <h2 className="text-2xl font-bold mb-10 tracking-tight">
+            Panel Admin
+          </h2>
           <nav className="space-y-6">
             <Link
               href="/admin/dashboard"
@@ -80,8 +81,8 @@ export default function ResponseDetailsClient({ response }: Props) {
             </Link>
           </nav>
         </div>
-         <button
-          onClick={() => router.push('/admin/login')}
+        <button
+          onClick={() => router.push("/admin/login")}
           className="mt-6 flex items-center justify-center gap-2 border border-white px-3 py-2 rounded text-sm hover:bg-white hover:text-blue-700 transition"
         >
           Déconnexion
@@ -93,7 +94,7 @@ export default function ResponseDetailsClient({ response }: Props) {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
           className="max-w-5xl mx-auto bg-white shadow-2xl rounded-2xl p-8 space-y-8"
         >
           <div className="flex justify-between items-center border-b border-gray-200 pb-4">
@@ -101,7 +102,7 @@ export default function ResponseDetailsClient({ response }: Props) {
               Détails des réponses de {response.contactNom}
             </h1>
             <button
-              onClick={() => router.push('/admin/responses')}
+              onClick={() => router.push("/admin/responses")}
               className="flex items-center gap-2 text-blue-600 hover:underline"
             >
               <ArrowLeft /> Retour aux réponses
@@ -110,24 +111,41 @@ export default function ResponseDetailsClient({ response }: Props) {
 
           <div className="space-y-8">
             <Section title="Informations Générales">
-              <Field label="Nom du projet" value={response.nomProjet || 'N/A'} />
-              <Field label="Nom du contact" value={response.contactNom || 'N/A'} />
-              <Field label="Fonction du contact" value={response.contactFonction || 'N/A'} />
-              <Field label="Email" value={response.email || 'N/A'} />
-              <Field label="Téléphone" value={response.telephone || 'N/A'} />
-              <Field label="Site web existant" value={response.siteWeb || 'N/A'} />
+              <Field
+                label="Nom du projet"
+                value={response.nomProjet || "N/A"}
+              />
+              <Field
+                label="Nom du contact"
+                value={response.contactNom || "N/A"}
+              />
+              <Field
+                label="Fonction du contact"
+                value={response.contactFonction || "N/A"}
+              />
+              <Field label="Email" value={response.email || "N/A"} />
+              <Field label="Téléphone" value={response.telephone || "N/A"} />
+              <Field
+                label="Site web existant"
+                value={response.siteWeb || "N/A"}
+              />
               <Field
                 label="Date de mise en ligne"
                 value={
                   response.dateMiseEnLigne
-                    ? new Date(response.dateMiseEnLigne).toLocaleDateString('fr-FR')
-                    : 'N/A'
+                    ? new Date(response.dateMiseEnLigne).toLocaleDateString(
+                        "fr-FR"
+                      )
+                    : "N/A"
                 }
               />
-              <Field label="Événement associé" value={response.evenementAssocie || 'N/A'} />
+              <Field
+                label="Événement associé"
+                value={response.evenementAssocie || "N/A"}
+              />
               <Field
                 label="Date de soumission"
-                value={new Date(response.createdAt).toLocaleDateString('fr-FR')}
+                value={new Date(response.createdAt).toLocaleDateString("fr-FR")}
               />
             </Section>
 
@@ -142,11 +160,14 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucun'
+                    "Aucun"
                   )
                 }
               />
-              <Field label="Public cible" value={response.publicCible || 'N/A'} />
+              <Field
+                label="Public cible"
+                value={response.publicCible || "N/A"}
+              />
             </Section>
 
             <Section title="Contenu & Pages">
@@ -160,14 +181,17 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucune'
+                    "Aucune"
                   )
                 }
               />
-              <Field label="Contenu disponible" value={response.contenuDisponible || 'N/A'} />
+              <Field
+                label="Contenu disponible"
+                value={response.contenuDisponible || "N/A"}
+              />
               <Field
                 label="Pages à mettre à jour"
-                value={response.pagesAMettreJour ? 'Oui' : 'Non'}
+                value={response.pagesAMettreJour ? "Oui" : "Non"}
               />
             </Section>
 
@@ -182,7 +206,7 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucune'
+                    "Aucune"
                   )
                 }
               />
@@ -199,11 +223,14 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucun'
+                    "Aucun"
                   )
                 }
               />
-              <Field label="Nombre de produits" value={response.nbProduits || 'N/A'} />
+              <Field
+                label="Nombre de produits"
+                value={response.nbProduits || "N/A"}
+              />
               <Field
                 label="Besoins spécifiques"
                 value={
@@ -214,7 +241,7 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucun'
+                    "Aucun"
                   )
                 }
               />
@@ -231,7 +258,7 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucune'
+                    "Aucune"
                   )
                 }
               />
@@ -248,7 +275,7 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucun'
+                    "Aucun"
                   )
                 }
               />
@@ -257,15 +284,27 @@ export default function ResponseDetailsClient({ response }: Props) {
             <Section title="Gestion & Technique">
               <Field
                 label="Gestion de la plateforme"
-                value={response.gestionPlateforme ? 'Oui' : 'Non'}
+                value={response.gestionPlateforme ? "Oui" : "Non"}
               />
-              <Field label="Hébergement" value={response.hebergement || 'N/A'} />
-              <Field label="Connexion outils" value={response.connexionOutils || 'N/A'} />
+              <Field
+                label="Hébergement"
+                value={response.hebergement || "N/A"}
+              />
+              <Field
+                label="Connexion outils"
+                value={response.connexionOutils || "N/A"}
+              />
             </Section>
 
             <Section title="Sécurité & RGPD">
-              <Field label="Respect RGPD" value={response.respectRGPD || 'N/A'} />
-              <Field label="Sauvegardes automatiques" value={response.sauvegardesAuto || 'N/A'} />
+              <Field
+                label="Respect RGPD"
+                value={response.respectRGPD || "N/A"}
+              />
+              <Field
+                label="Sauvegardes automatiques"
+                value={response.sauvegardesAuto || "N/A"}
+              />
             </Section>
 
             <Section title="Maintenance & Formation">
@@ -279,16 +318,19 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucun'
+                    "Aucun"
                   )
                 }
               />
             </Section>
 
             <Section title="Budget & Modalités">
-              <Field label="Budget" value={response.budget || 'N/A'} />
-              <Field label="Paiement" value={response.paiement || 'N/A'} />
-              <Field label="Appel d’offre" value={response.appelOffre || 'N/A'} />
+              <Field label="Budget" value={response.budget || "N/A"} />
+              <Field label="Paiement" value={response.paiement || "N/A"} />
+              <Field
+                label="Appel d’offre"
+                value={response.appelOffre || "N/A"}
+              />
             </Section>
 
             <Section title="Community Management & Communication Digitale">
@@ -302,7 +344,7 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucun'
+                    "Aucun"
                   )
                 }
               />
@@ -316,7 +358,7 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucune'
+                    "Aucune"
                   )
                 }
               />
@@ -330,11 +372,14 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucun'
+                    "Aucun"
                   )
                 }
               />
-              <Field label="Stratégie existante" value={response.strategieExistante || 'N/A'} />
+              <Field
+                label="Stratégie existante"
+                value={response.strategieExistante || "N/A"}
+              />
             </Section>
 
             <Section title="Référencement & Visibilité">
@@ -348,7 +393,7 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucun'
+                    "Aucun"
                   )
                 }
               />
@@ -362,14 +407,17 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucun'
+                    "Aucun"
                   )
                 }
               />
             </Section>
 
             <Section title="E-réputation & Avis">
-              <Field label="Gestion e-réputation" value={response.gestionEReputation || 'N/A'} />
+              <Field
+                label="Gestion e-réputation"
+                value={response.gestionEReputation || "N/A"}
+              />
               <Field
                 label="Actions avis"
                 value={
@@ -380,14 +428,14 @@ export default function ResponseDetailsClient({ response }: Props) {
                       ))}
                     </ul>
                   ) : (
-                    'Aucun'
+                    "Aucun"
                   )
                 }
               />
             </Section>
 
             <Section title="Autres besoins ou remarques">
-              <Field label="Remarques" value={response.remarques || 'Aucune'} />
+              <Field label="Remarques" value={response.remarques || "Aucune"} />
             </Section>
           </div>
         </motion.div>
@@ -396,12 +444,18 @@ export default function ResponseDetailsClient({ response }: Props) {
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       className="border-l-4 border-[#D4AF37] bg-gray-50 rounded-lg p-6 shadow-sm"
     >
       <h2 className="text-xl font-semibold text-[#1E3A8A] mb-4">{title}</h2>
@@ -414,7 +468,9 @@ function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex items-start">
       <span className="w-1/3 text-sm font-medium text-gray-700">{label} :</span>
-      <span className="w-2/3 text-sm text-gray-900 whitespace-pre-wrap">{value}</span>
+      <span className="w-2/3 text-sm text-gray-900 whitespace-pre-wrap">
+        {value}
+      </span>
     </div>
   );
 }

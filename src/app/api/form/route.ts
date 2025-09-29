@@ -1,7 +1,7 @@
 // app/api/form/route.ts
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { z } from 'zod';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { z } from "zod";
 
 // Définir le schéma Zod pour la validation
 const formSchema = z.object({
@@ -23,12 +23,12 @@ const formSchema = z.object({
 
   venteEnLigne: z.boolean().optional(),
   typesProduitsServices: z.array(z.string()).optional(), // frontend = typesProduitsServices
-  nombreProduits: z.string().optional(),                 // frontend = nombreProduits
+  nombreProduits: z.string().optional(), // frontend = nombreProduits
 
   besoinsSpecifiques: z.array(z.string()).optional(),
   webMobile: z.array(z.string()).optional(),
   stylePrefere: z.array(z.string()).optional(),
-  gestionSite: z.string().optional(),                    // frontend = gestionSite
+  gestionSite: z.string().optional(), // frontend = gestionSite
   hebergement: z.string().optional(),
   connexionOutils: z.string().optional(),
   respectRGPD: z.string().optional(),
@@ -48,72 +48,77 @@ const formSchema = z.object({
   remarques: z.string().optional(),
 });
 
-
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log('Body brut reçu du frontend:', body);
-
+    console.log("Body brut reçu du frontend:", body);
 
     // Valider les données reçues avec Zod (strings 'Oui', 'Non', 'Ne sais pas')
     const data = formSchema.parse(body);
 
-    // Convertir les champs qui doivent être boolean ou null
-    const convertOuiNon = (val?: string) => {
-      if (val === 'Oui') return true;
-      if (val === 'Non') return false;
-      return null; // 'Ne sais pas' ou undefined
+    const prismaData = {
+      nomProjet: data.nomProjet,
+      contactNom: data.contactNom,
+      contactFonction: data.contactFonction,
+      email: data.email,
+      telephone: data.telephone,
+      siteWeb: data.siteWeb,
+      dateMiseEnLigne: data.dateMiseEnLigne
+        ? new Date(data.dateMiseEnLigne)
+        : undefined,
+      evenementAssocie: data.evenementAssocie,
+
+      objectifs: data.objectifs?.filter((v): v is string => !!v),
+      publicCible: data.publicCible,
+      pages: data.pages?.filter((v): v is string => !!v),
+      contenuDisponible: data.contenuDisponible,
+      pagesAMettreJour: data.pagesAMettreJour,
+      fonctionnalites: data.fonctionnalites?.filter((v): v is string => !!v),
+
+      venteEnLigne: data.venteEnLigne,
+      typesProduits: data.typesProduitsServices?.filter(
+        (v): v is string => !!v
+      ),
+      nbProduits: data.nombreProduits,
+      besoinsSpecifiques: data.besoinsSpecifiques?.filter(
+        (v): v is string => !!v
+      ),
+      webMobile: data.webMobile?.filter((v): v is string => !!v),
+      stylePrefere: data.stylePrefere?.filter((v): v is string => !!v),
+      gestionPlateforme: data.gestionSite === "Oui",
+      hebergement: data.hebergement,
+      connexionOutils: data.connexionOutils,
+      respectRGPD: data.respectRGPD,
+      sauvegardesAuto: data.sauvegardesAuto,
+      besoinsSupport: data.besoinsMaintenance?.filter((v): v is string => !!v),
+      budget: data.budget,
+      paiement: data.paiement,
+      appelOffre: data.appelOffre,
+
+      // wrap as array, filter out undefined
+      communityManagement: [data.accompagnementCM].filter(
+        (v): v is string => !!v
+      ),
+      plateformes: data.plateformesCM?.filter((v): v is string => !!v),
+      besoinsComm: data.besoinsComDigitale?.filter((v): v is string => !!v),
+      strategieExistante: data.strategieExistante,
+      referencement: [data.importanceReferencement].filter(
+        (v): v is string => !!v
+      ),
+      accompagnementSEO: data.accompagnementSEO?.filter(
+        (v): v is string => !!v
+      ),
+      gestionEReputation: data.gestionEReputation,
+      actionsAvis: data.actionsAvis?.filter((v): v is string => !!v),
+      remarques: data.remarques,
     };
 
-   const prismaData = {
-  nomProjet: data.nomProjet,
-  contactNom: data.contactNom,
-  contactFonction: data.contactFonction,
-  email: data.email,
-  telephone: data.telephone,
-  siteWeb: data.siteWeb,
-  dateMiseEnLigne: data.dateMiseEnLigne ? new Date(data.dateMiseEnLigne) : undefined,
-  evenementAssocie: data.evenementAssocie,
-
-  objectifs: data.objectifs,
-  publicCible: data.publicCible,
-  pages: data.pages,
-  contenuDisponible: data.contenuDisponible,
-  pagesAMettreJour: data.pagesAMettreJour,
-  fonctionnalites: data.fonctionnalites,
-
-  venteEnLigne: data.venteEnLigne,
-  typesProduits: data.typesProduitsServices,
-  nbProduits: data.nombreProduits,
-  webMobile: data.webMobile,
-  besoinsSpecifiques: data.besoinsSpecifiques,
-  stylePrefere: data.stylePrefere,
-  gestionPlateforme: data.gestionSite === 'Oui', // ou adapte selon logique
-  hebergement: data.hebergement,
-  connexionOutils: data.connexionOutils,
-  respectRGPD: data.respectRGPD,
-  sauvegardesAuto: data.sauvegardesAuto,
-  besoinsSupport: data.besoinsMaintenance,
-  budget: data.budget,
-  paiement: data.paiement,
-  appelOffre: data.appelOffre,
-  communityManagement: [data.accompagnementCM].filter(Boolean),
-  plateformes: data.plateformesCM,
-  besoinsComm: data.besoinsComDigitale,
-  strategieExistante: data.strategieExistante,
-  referencement: [data.importanceReferencement].filter(Boolean),
-  accompagnementSEO: data.accompagnementSEO,
-  gestionEReputation: data.gestionEReputation,
-  actionsAvis: data.actionsAvis,
-  remarques: data.remarques,
-};
-
-console.log('Données reçues:', {
-  ...data,
-  remarques: data.remarques || 'VIDE' // Pour bien voir si le champ est vide
-});
+    console.log("Données reçues:", {
+      ...data,
+      remarques: data.remarques || "VIDE", // Pour bien voir si le champ est vide
+    });
     // Créer l'entrée dans la base avec Prisma
-    console.log('Données validées envoyées à Prisma:', data);
+    console.log("Données validées envoyées à Prisma:", data);
 
     const response = await prisma.formResponse.create({
       data: prismaData,
@@ -121,9 +126,12 @@ console.log('Données reçues:', {
 
     return NextResponse.json({ success: true, data: response });
   } catch (error) {
-    console.error('Erreur lors de l’envoi du formulaire:', error);
+    console.error("Erreur lors de l’envoi du formulaire:", error);
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : 'Erreur inconnue' },
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Erreur inconnue",
+      },
       { status: 400 }
     );
   }
@@ -132,14 +140,17 @@ console.log('Données reçues:', {
 export async function GET() {
   try {
     const allResponses = await prisma.formResponse.findMany({
-      orderBy: { createdAt: 'desc' },
-    })
+      orderBy: { createdAt: "desc" },
+    });
 
-    return NextResponse.json({ success: true, data: allResponses }, { status: 200 })
+    return NextResponse.json(
+      { success: true, data: allResponses },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Erreur lors de la récupération des données' },
+      { success: false, error: "Erreur lors de la récupération des données" },
       { status: 500 }
-    )
+    );
   }
 }

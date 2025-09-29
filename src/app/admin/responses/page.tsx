@@ -1,42 +1,34 @@
-'use client';
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
-import { LogOut, ArrowLeft } from 'lucide-react';
-import { getResponses } from '@/actions/getResponses';
-import { useEffect } from 'react';
-import Link from 'next/link';
-
-interface Response {
-  id: number;
-  nomProjet: string | null;
-  email: string | null;
-  objectifs: string[];
-  createdAt: string;
-}
+"use client";
+import { getResponses } from "@/actions/getResponses";
+import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { ArrowLeft, LogOut } from "lucide-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function ResponsesList() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['responses'],
+    queryKey: ["responses"],
     queryFn: async () => await getResponses(),
   });
 
   useEffect(() => {
-    if (status !== 'loading' && (!session || session.user?.role !== 'admin')) {
-      router.push('/admin/login');
+    if (status !== "loading" && (!session || session.user?.role !== "admin")) {
+      router.push("/admin/login");
     }
   }, [status, session, router]);
 
-  if (status === 'loading' || isLoading) {
+  if (status === "loading" || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           className="h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"
         />
       </div>
@@ -75,7 +67,7 @@ export default function ResponsesList() {
           </nav>
         </div>
         <button
-          onClick={() => router.push('/admin/login')}
+          onClick={() => router.push("/admin/login")}
           className="mt-6 flex items-center justify-center gap-2 border border-white px-3 py-2 rounded text-sm hover:bg-white hover:text-blue-700 transition"
         >
           Déconnexion
@@ -92,9 +84,11 @@ export default function ResponsesList() {
           className="max-w-4xl mx-auto bg-white shadow rounded-lg p-6 space-y-6"
         >
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-800">Toutes les réponses</h1>
+            <h1 className="text-2xl font-bold text-gray-800">
+              Toutes les réponses
+            </h1>
             <button
-              onClick={() => router.push('/admin/dashboard')}
+              onClick={() => router.push("/admin/dashboard")}
               className="flex items-center gap-2 text-blue-600 hover:underline"
             >
               <ArrowLeft size={16} />
@@ -113,11 +107,11 @@ export default function ResponsesList() {
                   className="border p-4 rounded flex justify-between items-start hover:bg-gray-50 transition"
                 >
                   <div>
-                    <p className="font-semibold">{r.nomProjet || 'Sans nom'}</p>
-                    <p className="text-sm text-gray-600">{r.email || 'N/A'}</p>
+                    <p className="font-semibold">{r.nomProjet || "Sans nom"}</p>
+                    <p className="text-sm text-gray-600">{r.email || "N/A"}</p>
                   </div>
                   <div className="text-sm text-gray-500">
-                    {new Date(r.createdAt).toLocaleDateString('fr-FR')}
+                    {new Date(r.createdAt).toLocaleDateString("fr-FR")}
                   </div>
                 </Link>
               ))}
