@@ -1,5 +1,5 @@
 "use client";
-import { getResponses } from "@/actions/getResponses";
+import { getResponses } from "@/actions";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { ArrowLeft, LogOut } from "lucide-react";

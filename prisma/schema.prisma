@@ -17,56 +17,29 @@ model User {
 }
 
 model FormResponse {
-  id               Int       @id @default(autoincrement())
-  nomProjet        String?
-  contactNom       String?
-  contactFonction  String?
-  email            String?
-  telephone        String?
-  siteWeb          String?
-  dateMiseEnLigne  DateTime?
-  evenementAssocie String?
+  id Int @id @default(autoincrement())
 
-  objectifs   Json?
-  publicCible String?
+  nomProjet          String?
+  entreprise         String?
+  secteurActivite    String?
+  contactNom         String?
+  contactFonction    String?
+  email              String?
+  telephone          String?
+  dateLancement      DateTime?
+  descriptionProjet  String?
+  problemeResoudre   String?
+  utilisateursCibles String?
+  nombreUtilisateurs String?
 
-  pages             Json?
-  contenuDisponible String?
-  pagesAMettreJour  Boolean?
-
-  fonctionnalites    Json?
-  typesProduits      Json?
-  nbProduits         String?
-  besoinsSpecifiques Json?
-
-  webMobile Json?
-
-  stylePrefere Json?
-
-  gestionPlateforme Boolean?
-  hebergement       String?
-  connexionOutils   String?
-
-  respectRGPD     String?
-  sauvegardesAuto String?
-
-  besoinsSupport Json?
-  budget         String?
-  paiement       String?
-  appelOffre     String?
-
-  communityManagement Json?
-  plateformes         Json?
-  besoinsComm         Json?
-  strategieExistante  String?
-
-  referencement     Json?
-  accompagnementSEO Json?
-
-  gestionEReputation String?
-  actionsAvis        Json?
-
-  remarques String?
+  fonctionnalitesPrincipales    Json?
+  fonctionnalitePrincipaleAutre String?
+  typeApplication               Json?
+  styleVisuel                   Json?
+  styleAutre                    String?
+  budget                        String?
+  delaiRealisation              String?
+  commentaires                  String?
 
   createdAt DateTime @default(now())
 }

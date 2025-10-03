@@ -14,19 +14,27 @@ interface FormState {
 }
 
 const defaultFormData: Partial<FormValues> = {
-  objectifs: [],
-  pages: [],
-  fonctionnalites: [],
-  typesProduitsServices: [],
-  besoinsSpecifiques: [],
-  webMobile: [],
-  designAssets: [],
-  stylePrefere: [],
-  besoinsMaintenance: [],
-  plateformesCM: [],
-  besoinsComDigitale: [],
-  accompagnementSEO: [],
-  actionsAvis: [],
+  nomProjet: "",
+  entreprise: "",
+  secteurActivite: "",
+  contactNom: "",
+  contactFonction: "",
+  email: "",
+  telephone: "",
+  dateLancement: "",
+  descriptionProjet: "",
+  problemeResoudre: "",
+  utilisateursCibles: "",
+  nombreUtilisateurs: undefined,
+
+  fonctionnalitesPrincipales: [],
+  fonctionnalitePrincipaleAutre: "",
+  typeApplication: [],
+  styleVisuel: [],
+  styleAutre: "",
+  budget: undefined,
+  delaiRealisation: undefined,
+  commentaires: "",
 };
 
 export const useFormStore = create<FormState>()(

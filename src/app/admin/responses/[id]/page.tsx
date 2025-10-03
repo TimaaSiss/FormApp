@@ -1,4 +1,4 @@
-import { getResponseById } from "@/actions/getResponseById";
+import { getResponseById } from "@/actions";
 import ResponseDetailsClient from "@/components/responseDetails";
 import { notFound } from "next/navigation";
 

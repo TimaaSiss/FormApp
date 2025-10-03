@@ -1,5 +1,5 @@
 "use client";
-import { getResponses } from "@/actions/getResponses";
+import { getResponses } from "@/actions";
 import { useQuery } from "@tanstack/react-query";
 import {
   BarElement,
@@ -30,7 +30,6 @@ interface Response {
   id: number;
   nomProjet: string | null;
   email: string | null;
-  objectifs: string[];
   createdAt: string;
 }
 
@@ -88,7 +87,7 @@ export default function Dashboard() {
   }
 
   const responses = data?.responses || [];
-  const monthlyStats = getMonthlyProjectStats(responses);
+  const monthlyStats = getMonthlyProjectStats(responses ?? []);
   const latestResponses = responses.slice(0, 2);
   const totalResponses = data?.stats.totalResponses || 0;
 
@@ -194,9 +193,6 @@ export default function Dashboard() {
                   <div>
                     <p className="font-semibold">{r.nomProjet || "Sans nom"}</p>
                     <p className="text-sm text-gray-600">{r.email || "N/A"}</p>
-                    <p className="text-sm">
-                      {r.objectifs?.join(", ") || "Aucun"}
-                    </p>
                   </div>
                   <div className="text-sm text-gray-500">
                     {new Date(r.createdAt).toLocaleDateString("fr-FR")}

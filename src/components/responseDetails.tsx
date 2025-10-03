@@ -1,52 +1,11 @@
 "use client";
 
+import { FormResponse } from "@prisma/client";
 import { motion } from "framer-motion";
 import { ArrowLeft, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-
-export interface FormResponse {
-  id: number;
-  nomProjet: string | null;
-  contactNom: string | null;
-  contactFonction: string | null;
-  email: string | null;
-  telephone: string | null;
-  siteWeb: string | null;
-  dateMiseEnLigne: string | null;
-  evenementAssocie: string | null;
-  objectifs: string[];
-  publicCible: string | null;
-  pages: string[];
-  contenuDisponible: string | null;
-  pagesAMettreJour: boolean | null;
-  fonctionnalites: string[];
-  typesProduits: string[];
-  nbProduits: string | null;
-  besoinsSpecifiques: string[];
-  webMobile: string[];
-  stylePrefere: string[];
-  gestionPlateforme: boolean | null;
-  hebergement: string | null;
-  connexionOutils: string | null;
-  respectRGPD: string | null;
-  sauvegardesAuto: string | null;
-  besoinsSupport: string[];
-  budget: string | null;
-  paiement: string | null;
-  appelOffre: string | null;
-  communityManagement: string[];
-  plateformes: string[];
-  besoinsComm: string[];
-  strategieExistante: string | null;
-  referencement: string[];
-  accompagnementSEO: string[];
-  gestionEReputation: string | null;
-  actionsAvis: string[];
-  remarques: string | null;
-  createdAt: string;
-}
 
 interface Props {
   response: FormResponse;
@@ -99,7 +58,7 @@ export default function ResponseDetailsClient({ response }: Props) {
         >
           <div className="flex justify-between items-center border-b border-gray-200 pb-4">
             <h1 className="text-3xl font-bold text-[#1E3A8A] tracking-tight">
-              Détails des réponses de {response.contactNom}
+              Détails du projet - {response.nomProjet || "Sans nom"}
             </h1>
             <button
               onClick={() => router.push("/admin/responses")}
@@ -110,10 +69,16 @@ export default function ResponseDetailsClient({ response }: Props) {
           </div>
 
           <div className="space-y-8">
-            <Section title="Informations Générales">
+            {/* Étape 1 - Informations du Projet */}
+            <Section title="Informations du Projet">
               <Field
                 label="Nom du projet"
                 value={response.nomProjet || "N/A"}
+              />
+              <Field label="Entreprise" value={response.entreprise || "N/A"} />
+              <Field
+                label="Secteur d'activité"
+                value={response.secteurActivite || "N/A"}
               />
               <Field
                 label="Nom du contact"
@@ -126,22 +91,14 @@ export default function ResponseDetailsClient({ response }: Props) {
               <Field label="Email" value={response.email || "N/A"} />
               <Field label="Téléphone" value={response.telephone || "N/A"} />
               <Field
-                label="Site web existant"
-                value={response.siteWeb || "N/A"}
-              />
-              <Field
-                label="Date de mise en ligne"
+                label="Date de lancement souhaitée"
                 value={
-                  response.dateMiseEnLigne
-                    ? new Date(response.dateMiseEnLigne).toLocaleDateString(
+                  response.dateLancement
+                    ? new Date(response.dateLancement).toLocaleDateString(
                         "fr-FR"
                       )
                     : "N/A"
                 }
-              />
-              <Field
-                label="Événement associé"
-                value={response.evenementAssocie || "N/A"}
               />
               <Field
                 label="Date de soumission"
@@ -149,293 +106,178 @@ export default function ResponseDetailsClient({ response }: Props) {
               />
             </Section>
 
-            <Section title="Objectifs du site">
+            <Section title="Description du Projet">
               <Field
-                label="Objectifs"
-                value={
-                  response.objectifs.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.objectifs.map((objectif, index) => (
-                        <li key={index}>{objectif}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Aucun"
-                  )
-                }
+                label="Description du projet"
+                value={response.descriptionProjet || "N/A"}
               />
               <Field
-                label="Public cible"
-                value={response.publicCible || "N/A"}
+                label="Problème à résoudre"
+                value={response.problemeResoudre || "N/A"}
               />
             </Section>
 
-            <Section title="Contenu & Pages">
+            <Section title="Utilisateurs Cibles">
               <Field
-                label="Pages souhaitées"
-                value={
-                  response.pages.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.pages.map((page, index) => (
-                        <li key={index}>{page}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Aucune"
-                  )
-                }
+                label="Utilisateurs cibles"
+                value={response.utilisateursCibles || "N/A"}
               />
               <Field
-                label="Contenu disponible"
-                value={response.contenuDisponible || "N/A"}
-              />
-              <Field
-                label="Pages à mettre à jour"
-                value={response.pagesAMettreJour ? "Oui" : "Non"}
+                label="Nombre d'utilisateurs prévus"
+                value={response.nombreUtilisateurs || "N/A"}
               />
             </Section>
 
-            <Section title="Fonctionnalités principales">
+            {/* Étape 2 - Besoins & Spécifications */}
+            <Section title="Fonctionnalités Principales">
               <Field
-                label="Fonctionnalités"
+                label="Fonctionnalités principales"
                 value={
-                  response.fonctionnalites.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.fonctionnalites.map((fonctionnalite, index) => (
-                        <li key={index}>{fonctionnalite}</li>
-                      ))}
+                  response.fonctionnalitesPrincipales &&
+                  (response.fonctionnalitesPrincipales as string[]).length ? (
+                    <ul className="list-disc list-inside space-y-1">
+                      {(response.fonctionnalitesPrincipales as string[])?.map(
+                        (fonctionnalite, index) => (
+                          <li key={index} className="text-gray-700">
+                            {fonctionnalite}
+                          </li>
+                        )
+                      )}
                     </ul>
                   ) : (
-                    "Aucune"
+                    "Aucune fonctionnalité spécifiée"
                   )
                 }
               />
+              {response.fonctionnalitePrincipaleAutre && (
+                <Field
+                  label="Autre fonctionnalité"
+                  value={response.fonctionnalitePrincipaleAutre}
+                />
+              )}
             </Section>
 
-            <Section title="Vente en ligne">
+            <Section title="Type d'Application">
               <Field
-                label="Types de produits"
+                label="Plateformes cibles"
                 value={
-                  response.typesProduits.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.typesProduits.map((type, index) => (
-                        <li key={index}>{type}</li>
-                      ))}
+                  response.typeApplication &&
+                  (response.typeApplication as string[]).length ? (
+                    <ul className="list-disc list-inside space-y-1">
+                      {(response.typeApplication as string[]).map(
+                        (type, index) => (
+                          <li key={index} className="text-gray-700">
+                            {type}
+                          </li>
+                        )
+                      )}
                     </ul>
                   ) : (
-                    "Aucun"
-                  )
-                }
-              />
-              <Field
-                label="Nombre de produits"
-                value={response.nbProduits || "N/A"}
-              />
-              <Field
-                label="Besoins spécifiques"
-                value={
-                  response.besoinsSpecifiques.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.besoinsSpecifiques.map((besoin, index) => (
-                        <li key={index}>{besoin}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Aucun"
+                    "Aucune plateforme spécifiée"
                   )
                 }
               />
             </Section>
 
-            <Section title="Web & Mobile">
+            <Section title="Design & Style Visuel">
               <Field
-                label="Options"
+                label="Styles visuels préférés"
                 value={
-                  response.webMobile.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.webMobile.map((option, index) => (
-                        <li key={index}>{option}</li>
-                      ))}
+                  response.styleVisuel &&
+                  (response.styleVisuel as string[]).length ? (
+                    <ul className="list-disc list-inside space-y-1">
+                      {(response.styleVisuel as string[]).map(
+                        (style, index) => (
+                          <li key={index} className="text-gray-700">
+                            {style}
+                          </li>
+                        )
+                      )}
                     </ul>
                   ) : (
-                    "Aucune"
+                    "Aucun style spécifié"
                   )
                 }
               />
+              {response.styleAutre && (
+                <Field label="Autre style" value={response.styleAutre} />
+              )}
             </Section>
 
-            <Section title="Design & Image">
+            <Section title="Budget & Planning">
               <Field
-                label="Style préféré"
-                value={
-                  response.stylePrefere.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.stylePrefere.map((style, index) => (
-                        <li key={index}>{style}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Aucun"
-                  )
-                }
+                label="Budget estimé"
+                value={response.budget || "Non spécifié"}
+              />
+              <Field
+                label="Délai de réalisation souhaité"
+                value={response.delaiRealisation || "Non spécifié"}
               />
             </Section>
 
-            <Section title="Gestion & Technique">
-              <Field
-                label="Gestion de la plateforme"
-                value={response.gestionPlateforme ? "Oui" : "Non"}
-              />
-              <Field
-                label="Hébergement"
-                value={response.hebergement || "N/A"}
-              />
-              <Field
-                label="Connexion outils"
-                value={response.connexionOutils || "N/A"}
-              />
-            </Section>
+            {response.commentaires && (
+              <Section title="Commentaires & Exigences Particulières">
+                <Field
+                  label="Commentaires supplémentaires"
+                  value={response.commentaires}
+                />
+              </Section>
+            )}
 
-            <Section title="Sécurité & RGPD">
-              <Field
-                label="Respect RGPD"
-                value={response.respectRGPD || "N/A"}
-              />
-              <Field
-                label="Sauvegardes automatiques"
-                value={response.sauvegardesAuto || "N/A"}
-              />
-            </Section>
+            {/* Résumé du projet */}
+            <Section title="Résumé du Projet">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3 className="font-semibold text-blue-800 mb-2">
+                    Informations clés
+                  </h3>
+                  <div className="space-y-1 text-sm">
+                    <p>
+                      <span className="font-medium">Projet:</span>{" "}
+                      {response.nomProjet || "N/A"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Contact:</span>{" "}
+                      {response.contactNom || "N/A"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Email:</span>{" "}
+                      {response.email || "N/A"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Budget:</span>{" "}
+                      {response.budget || "Non spécifié"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Délai:</span>{" "}
+                      {response.delaiRealisation || "Non spécifié"}
+                    </p>
+                  </div>
+                </div>
 
-            <Section title="Maintenance & Formation">
-              <Field
-                label="Besoins support"
-                value={
-                  response.besoinsSupport.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.besoinsSupport.map((support, index) => (
-                        <li key={index}>{support}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Aucun"
-                  )
-                }
-              />
-            </Section>
-
-            <Section title="Budget & Modalités">
-              <Field label="Budget" value={response.budget || "N/A"} />
-              <Field label="Paiement" value={response.paiement || "N/A"} />
-              <Field
-                label="Appel d’offre"
-                value={response.appelOffre || "N/A"}
-              />
-            </Section>
-
-            <Section title="Community Management & Communication Digitale">
-              <Field
-                label="Community Management"
-                value={
-                  response.communityManagement.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.communityManagement.map((cm, index) => (
-                        <li key={index}>{cm}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Aucun"
-                  )
-                }
-              />
-              <Field
-                label="Plateformes"
-                value={
-                  response.plateformes.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.plateformes.map((plateforme, index) => (
-                        <li key={index}>{plateforme}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Aucune"
-                  )
-                }
-              />
-              <Field
-                label="Besoins communication"
-                value={
-                  response.besoinsComm.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.besoinsComm.map((besoin, index) => (
-                        <li key={index}>{besoin}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Aucun"
-                  )
-                }
-              />
-              <Field
-                label="Stratégie existante"
-                value={response.strategieExistante || "N/A"}
-              />
-            </Section>
-
-            <Section title="Référencement & Visibilité">
-              <Field
-                label="Référencement"
-                value={
-                  response.referencement.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.referencement.map((ref, index) => (
-                        <li key={index}>{ref}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Aucun"
-                  )
-                }
-              />
-              <Field
-                label="Accompagnement SEO"
-                value={
-                  response.accompagnementSEO.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.accompagnementSEO.map((seo, index) => (
-                        <li key={index}>{seo}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Aucun"
-                  )
-                }
-              />
-            </Section>
-
-            <Section title="E-réputation & Avis">
-              <Field
-                label="Gestion e-réputation"
-                value={response.gestionEReputation || "N/A"}
-              />
-              <Field
-                label="Actions avis"
-                value={
-                  response.actionsAvis.length ? (
-                    <ul className="list-disc list-inside">
-                      {response.actionsAvis.map((action, index) => (
-                        <li key={index}>{action}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "Aucun"
-                  )
-                }
-              />
-            </Section>
-
-            <Section title="Autres besoins ou remarques">
-              <Field label="Remarques" value={response.remarques || "Aucune"} />
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h3 className="font-semibold text-green-800 mb-2">
+                    Spécifications techniques
+                  </h3>
+                  <div className="space-y-1 text-sm">
+                    <p>
+                      <span className="font-medium">Plateformes:</span>{" "}
+                      {(response.typeApplication as string[]).join(", ") ||
+                        "Non spécifié"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Fonctionnalités:</span>{" "}
+                      {(response.fonctionnalitesPrincipales as string[]).join(
+                        ", "
+                      ) || "Non spécifié"}
+                    </p>
+                    <p>
+                      <span className="font-medium">Utilisateurs:</span>{" "}
+                      {response.nombreUtilisateurs || "Non spécifié"}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </Section>
           </div>
         </motion.div>
